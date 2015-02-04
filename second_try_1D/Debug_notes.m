@@ -30,9 +30,9 @@ hold off;
 
 
 %% Validating the derivative
-N = 5000000
+N = 50000
 rnsource_debug = randn(T,N);
-theta_now = theta_init
+theta_now = theta
 %theta_now = theta_init
 epsilon = 0.01
 tic,
