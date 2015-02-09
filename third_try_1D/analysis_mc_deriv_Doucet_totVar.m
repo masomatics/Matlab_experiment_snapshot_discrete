@@ -1,7 +1,8 @@
-%analysis_mc_deriv_Doucet
+%analysis_mc_deriv_Doucet_totalV
 %
-%This computes the derivative of the objective function 
-%E_q [log_\theta p(y, theta)]
+%This computes the derivative of the objective function  (Total Variation
+%distance)
+% |p( dot, theta)- q( dot )|
 %when q is an approximation of the given snapshot. 
 %The algorithm follows 5.6 of my snapnote. 
 %
@@ -37,7 +38,7 @@
 %   
 
 
-function [derivative, energy, p_ymk_all] = analysis_mc_deriv_Doucet(initmean, ...
+function [derivative, energy, p_ymk_all] = analysis_mc_deriv_Doucet_totVar(initmean, ...
 theta, sigV, sigW, T, rnsource_sys, compress_snap_vals, compress_snap_wgts, snaptime, N)
 
 %%%preset variables%%%
@@ -99,8 +100,9 @@ include = [];
             tilde_p_ymk = mean(p_ymkj,2);
             dEP_kr = 1/N * p_ymkj * deriv_loglike';
             
-            derivative_alltime(:,snaptime_now) = compress_snap_wgts(:,snaptime_now)' * ...
-                (dEP_kr ./ repmat(tilde_p_ymk,[1, num_parameters]));            
+            derivative_alltime(:,snaptime_now) = ...
+                sign(tilde_p_ymk -compress_snap_wgts(:,snaptime_now))' * ...
+                (dEP_kr);            
             
             %DEBUG : Make sure that the following two plots are the SAME
             %when using the same noise and same theta. 
@@ -113,7 +115,7 @@ include = [];
             %DEBUG:Compute energy ; Debug
             %energy(snaptime_now) = sum(log(p_ymk/sum(p_ymk)).* ...
             %    compress_snap_wgts(:,snaptime_now));
-            energy(snaptime_now) = log(tilde_p_ymk)' *compress_snap_wgts(:,snaptime_now);
+            energy(snaptime_now) = sum((tilde_p_ymk -compress_snap_wgts(:,snaptime_now)).^2);
                    if(max(p_ymkj(:))  > min(p_ymkj(:)) )
                         %In the case of using empirical distribution,
                         %the true distribution can be soo far from the
