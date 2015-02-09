@@ -22,6 +22,8 @@ end
 compress_snapshot_hist = ...
     struct(field1, compress_all_snapshot_hist.weights(:,timesample),...
     field2,compress_all_snapshot_hist.values(:,timesample))
+
+%compress2 = analysis_hist_generation(datx(:, timesample), num_bins);
 %%
 %compare the histogram against the real pdf on the state space. 
 figure(3);
